@@ -116,7 +116,7 @@ public class UserService {
 
 	public User saveUser(User newUser) {
 		try {
-
+			
 			UserDeliveryAddress deliveryAddress = new UserDeliveryAddress();
 			deliveryAddress.setCountry(newUser.getUserAddress().getCountry());
 			deliveryAddress.setCity(newUser.getUserAddress().getCity());
@@ -138,6 +138,9 @@ public class UserService {
 			if (newUser.getSelectedRole().equalsIgnoreCase("admin")) {
 				newUser.addRole(new Role(2));
 			}
+			
+			System.out.println(newUser.getUsername());
+			
 			return userRepository.save(newUser);
 
 		} catch (Exception e) {

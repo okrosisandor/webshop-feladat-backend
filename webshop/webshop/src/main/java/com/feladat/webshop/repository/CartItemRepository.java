@@ -16,4 +16,5 @@ public interface CartItemRepository extends CrudRepository<CustomerCartItem, Lon
 	@Modifying
 	@Query("UPDATE CustomerCartItem c SET c.status = 1 WHERE c.status = 0")
 	public void purchase();
+	
 }

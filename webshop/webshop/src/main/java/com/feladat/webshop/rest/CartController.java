@@ -1,5 +1,9 @@
 package com.feladat.webshop.rest;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +40,9 @@ public class CartController {
 	
 	@Autowired
 	private UserController userController;
-
+	
+	
+	
 	@PostMapping("/{userId}/{productId}")
 	public ResponseEntity<?> addToCart(@PathVariable Long productId, @PathVariable Long userId, @RequestBody CustomerCartItem cart) {
 		Product product = productService.findProductById(productId);
@@ -48,6 +54,26 @@ public class CartController {
 		product.setReservedQuantity(product.getReservedQuantity() + cart.getQuantity());
 		product.setAvailableInStock(product.getAvailableInStock() - cart.getQuantity());
 		productService.createOrUpdateProduct(product);
+		
+		
+//		Checking to see if the product is already in the cart and set accordingly
+		
+		Iterable<CustomerCartItem> carts = cartService.getAllItems();
+		
+   		List<CustomerCartItem> cartsList = StreamSupport.stream(carts.spliterator(), false).collect(Collectors.toList());
+   		
+   		for(CustomerCartItem theCart : cartsList) {
+   			
+   				if(theCart.getProduct().getId().equals(productId)) {
+   					
+   					theCart.setQuantity(theCart.getQuantity() + cart.getQuantity());
+   					cartService.createCartItem(theCart);
+   					
+   					return new ResponseEntity<CustomerCartItem>(theCart, HttpStatus.CREATED);
+   				}
+   		}
+   		
+//   	If product not in the cart yet
 		
 		product = productService.findProductById(productId);
 		CustomerCartItem cartItem = new CustomerCartItem();
@@ -86,6 +112,11 @@ public class CartController {
 	public ResponseEntity<?> updateCartItem(@RequestBody CustomerCartItem cartItem) {
 
 		cartService.createCartItem(cartItem);
+		
+		System.out.println("-----------------------------------");
+		System.out.println(cartItem);
+		System.out.println(cartItem.getProduct().getId());
+		System.out.println("-----------------------------------");
 		
 		return new ResponseEntity<CustomerCartItem>(cartItem, HttpStatus.CREATED);
 	}
