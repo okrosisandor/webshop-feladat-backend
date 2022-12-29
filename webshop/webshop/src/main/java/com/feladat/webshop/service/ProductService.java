@@ -23,7 +23,7 @@ public class ProductService {
 	}
 
 	public Iterable<Product> getProducts() {
-		return productRepository.findAll();
+		return productRepository.findAllByOrderByNameAsc();
 	}
 
 	

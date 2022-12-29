@@ -36,11 +36,11 @@ public class UserService {
         		updateDeliveryAddress(user, updated);
         	}else {
         		updateProperties(user, updated);
-        	}
-        	
-        	if(user.getPassword().length() > 5) {
-        		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        		updated.setPassword(passwordEncoder.encode(user.getPassword()));
+        		
+        		if(user.getPassword().length() > 5) {
+            		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            		updated.setPassword(passwordEncoder.encode(user.getPassword()));
+            	}
         	}
 
             return userRepository.save(updated);

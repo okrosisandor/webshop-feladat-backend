@@ -69,7 +69,7 @@ public class User implements UserDetails{
 	@JoinColumn(name="user_deliveryaddress_id")
 	private UserDeliveryAddress userDeliveryAddress;
 	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<CustomerCartItem> customerCart = new ArrayList<CustomerCartItem>();
     
     @ManyToMany
@@ -190,6 +190,8 @@ public class User implements UserDetails{
     public void addRole(Role role) {
         this.roles.add(role);
     }
+    
+    
     
     
 

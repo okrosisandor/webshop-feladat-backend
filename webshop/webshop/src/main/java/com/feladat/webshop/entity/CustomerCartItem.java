@@ -17,11 +17,12 @@ public class CustomerCartItem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "user_id")
+	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+	@JsonIgnore
+//    @JoinColumn(name = "user_id")
 	private User user;
 	
-	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "product_id")
 	private Product product;
 	
@@ -91,6 +92,7 @@ public class CustomerCartItem {
 	public void setStatus(byte status) {
 		this.status = status;
 	}
+	
 
 	@Override
 	public String toString() {

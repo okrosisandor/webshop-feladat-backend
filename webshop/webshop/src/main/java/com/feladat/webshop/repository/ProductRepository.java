@@ -8,5 +8,6 @@ import com.feladat.webshop.entity.Product;
 @Repository
 public interface ProductRepository extends CrudRepository<Product, Long>{
 	
+	public Iterable<Product> findAllByOrderByNameAsc();
 
 }

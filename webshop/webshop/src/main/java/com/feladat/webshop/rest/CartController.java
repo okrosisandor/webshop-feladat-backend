@@ -1,5 +1,6 @@
 package com.feladat.webshop.rest;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -44,7 +45,8 @@ public class CartController {
 	
 	
 	@PostMapping("/{userId}/{productId}")
-	public ResponseEntity<?> addToCart(@PathVariable Long productId, @PathVariable Long userId, @RequestBody CustomerCartItem cart) {
+	public ResponseEntity<?> addToCart(@PathVariable Long productId, @PathVariable Long userId, @RequestBody CustomerCartItem cart, Principal principal) {
+		
 		Product product = productService.findProductById(productId);
 		
 		if(product.getAvailableInStock() < cart.getQuantity()) {
@@ -58,7 +60,7 @@ public class CartController {
 		
 //		Checking to see if the product is already in the cart and set accordingly
 		
-		Iterable<CustomerCartItem> carts = cartService.getAllItems();
+		Iterable<CustomerCartItem> carts = cartService.retrieveItems((byte) 0, principal.getName());
 		
    		List<CustomerCartItem> cartsList = StreamSupport.stream(carts.spliterator(), false).collect(Collectors.toList());
    		
@@ -67,7 +69,7 @@ public class CartController {
    				if(theCart.getProduct().getId().equals(productId)) {
    					
    					theCart.setQuantity(theCart.getQuantity() + cart.getQuantity());
-   					cartService.createCartItem(theCart);
+   					cartService.createCartItem(theCart, principal.getName());
    					
    					return new ResponseEntity<CustomerCartItem>(theCart, HttpStatus.CREATED);
    				}
@@ -81,16 +83,15 @@ public class CartController {
 		cartItem.setQuantity(cart.getQuantity());
 		cartItem.setStatus((byte) 0);
 		
-		cartService.createCartItem(cartItem);
+		cartService.createCartItem(cartItem, principal.getName());
 		
 		return new ResponseEntity<CustomerCartItem>(cartItem, HttpStatus.CREATED);
 	}
 	
 	@GetMapping("")
-	public Iterable<CustomerCartItem> retrieveCustomerCart() {
+	public Iterable<CustomerCartItem> retrieveCustomerCart(Principal principal) {
 
-		return cartService.retrieveItems((byte) 0);
-		
+		return cartService.retrieveItems((byte) 0, principal.getName());
 	}
 	
 	@GetMapping("/{cartId}")
@@ -102,36 +103,32 @@ public class CartController {
 	}
 	
 	@GetMapping("/purchased")
-	public Iterable<CustomerCartItem> retrievePurchasedItems() {
+	public Iterable<CustomerCartItem> retrievePurchasedItems(Principal principal) {
 
-		return cartService.retrieveItems((byte) 1);
+		return cartService.retrieveItems((byte) 1, principal.getName());
 		
 	}
 	
 	@PatchMapping("/{cartId}")
-	public ResponseEntity<?> updateCartItem(@RequestBody CustomerCartItem cartItem) {
+	public ResponseEntity<?> updateCartItem(@RequestBody CustomerCartItem cartItem, Principal principal) {
 
-		cartService.createCartItem(cartItem);
-		
-		System.out.println("-----------------------------------");
-		System.out.println(cartItem);
-		System.out.println(cartItem.getProduct().getId());
-		System.out.println("-----------------------------------");
+		cartService.createCartItem(cartItem, principal.getName());
 		
 		return new ResponseEntity<CustomerCartItem>(cartItem, HttpStatus.CREATED);
 	}
 	
 	@PatchMapping("/purchase")
-	public ResponseEntity<?> purchase(@RequestBody User user) {
+	public ResponseEntity<?> purchase(@RequestBody User user, Principal principal) {
 
         User updatedUser = userService.updateUser(user, true);
         
-        Iterable<CustomerCartItem> cart = cartService.retrieveItems((byte) 0);
+        Iterable<CustomerCartItem> cart = cartService.retrieveItems((byte) 0, principal.getName());
+        
         for(CustomerCartItem c : cart) {
         	c.getProduct().setReservedQuantity(c.getProduct().getReservedQuantity() - c.getQuantity());
         }
 		
-		cartService.purchase();
+		cartService.purchase(principal.getName());
 		
 		return new ResponseEntity<String>("Successful purchase", HttpStatus.OK);
 	}

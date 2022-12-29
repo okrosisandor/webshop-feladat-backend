@@ -50,6 +50,7 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
                 "/**/*.js",
                 "/users/login",
                 "/users/register",
+                "/products/**",
                 "/**/**"
         )
 		.permitAll()

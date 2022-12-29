@@ -53,8 +53,7 @@ public class ProductController {
 	@GetMapping("")
 //	@RolesAllowed("ROLE_ADMIN")
 //	@RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
-	public Iterable<Product> getAllProducts(@RequestHeader (name="Authorization") String token){
-		System.out.println(token);
+	public Iterable<Product> getAllProducts(){
 		return productService.getProducts();
 	}
 	
