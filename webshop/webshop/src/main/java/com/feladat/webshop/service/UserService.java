@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.feladat.webshop.entity.Role;
 import com.feladat.webshop.entity.User;
 import com.feladat.webshop.entity.UserDeliveryAddress;
+import com.feladat.webshop.entity.UserHelper;
 import com.feladat.webshop.exception.UsernameAlreadyExistsException;
 import com.feladat.webshop.repository.UserRepository;
 
@@ -161,5 +162,20 @@ public class UserService {
 		}
 		
 		return user;
+	}
+
+	public boolean validatePassword(UserHelper helper, String username) {
+		
+		User user = getUserByName(username);
+		
+		if(user != null) {
+			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();  
+			boolean passwordsMatch = encoder.matches(helper.getPassword(), user.getPassword());
+			
+			return passwordsMatch ? true : false;
+		}
+		
+		return false;
+		
 	}
 }

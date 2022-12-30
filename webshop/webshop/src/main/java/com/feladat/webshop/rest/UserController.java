@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.feladat.webshop.entity.User;
+import com.feladat.webshop.entity.UserHelper;
 import com.feladat.webshop.service.UserService;
 import com.feladat.webshop.service.ValidationService;
 import com.feladat.webshop.utility.AuthRequest;
@@ -106,6 +107,16 @@ public class UserController {
 		User user = userService.getUserByName(username);
 		
 		return new ResponseEntity<User>(user, HttpStatus.OK);
+	}
+	
+	@PostMapping("/validate")
+	public boolean validateUser(@RequestBody UserHelper helper, Principal principal){
+		
+		System.out.println(helper);
+		
+		boolean passwordsMatch = userService.validatePassword(helper, principal.getName());
+		
+		return passwordsMatch;
 	}
 	
 	

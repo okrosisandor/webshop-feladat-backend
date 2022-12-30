@@ -1,6 +1,5 @@
 package com.feladat.webshop.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,8 +92,16 @@ public class CartService {
 		return cartItem;
 	}
 
+	
+//	@Transactional
+//	public Iterable<CustomerCartItem> removeCartItemById(Long cartId, String username) {
+//		cartItemRepository.removeById(cartId);
+//		return retrieveItems((byte) 0, username);
+//	}
+	
+	@Transactional
 	public void removeCartItemById(Long cartId) {
-		cartItemRepository.delete(findCartItemById(cartId));
+		cartItemRepository.removeById(cartId);
 	}
 	
 	

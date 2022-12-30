@@ -134,7 +134,8 @@ public class CartController {
 	}
 	
 	@DeleteMapping("/{cartId}")
-	public ResponseEntity<?> deleteCartItem(@PathVariable Long cartId){
+	public ResponseEntity<?> deleteCartItem(@PathVariable Long cartId, Principal principal){
+//		public Iterable<CustomerCartItem> deleteCartItem(@PathVariable Long cartId, Principal principal){
 		
 		CustomerCartItem cartItem = cartService.findCartItemById(cartId);
 		cartItem.getProduct().setAvailableInStock(cartItem.getProduct().getAvailableInStock() + cartItem.getQuantity());
@@ -143,6 +144,8 @@ public class CartController {
 		cartService.removeCartItemById(cartId);
 		
 		return new ResponseEntity<String>("CartItem with id '" + cartId + "' has successfully been deleted", HttpStatus.OK);
+		
+//		return cartService.retrieveItems((byte) 0, principal.getName());
 	}
 
 }
